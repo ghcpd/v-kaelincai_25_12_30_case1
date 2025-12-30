@@ -1,0 +1,120 @@
+# Role & Objective
+
+You are a software engineer tasked with debugging and fixing a shift scheduling system. Your goal is to identify the root cause of a validation bug, implement a minimal fix, and create a corrected version with full documentation and passing tests.
+
+## Background
+
+This is an employee shift scheduling system for a factory production line. The system manages work shifts with the following business rules:
+
+**Business Rules (All Must Be Enforced):**
+1. Employees cannot work more than 6 consecutive days without rest
+2. After a night shift (22:00-06:00), employees must rest at least 12 hours
+3. Employees cannot exceed 48 hours of work per week
+4. **Employees cannot have multiple shifts on the same day** (CURRENTLY BROKEN)
+
+**Shift Types:**
+- Morning: 06:00 - 14:00 (8 hours)
+- Afternoon: 14:00 - 22:00 (8 hours)
+- Night: 22:00 - 06:00 next day (8 hours)
+
+## Inputs & Context
+
+**Current Project Structure:**
+```
+issue_project/
+├── src/
+│   ├── __init__.py
+│   ├── models.py          # Employee and Shift data models
+│   ├── scheduler.py       # Main scheduling logic
+│   └── validator.py       # Business rule validation
+├── tests/
+│   ├── __init__.py
+│   ├── test_same_day_shifts.py      # Tests for same-day rule (FAILING)
+│   └── test_continuous_days.py      # Tests for other rules
+├── data/
+│   └── sample_shifts.json
+├── requirements.txt
+├── README.md
+└── KNOWN_ISSUE.md
+```
+
+**Problem:** The system allows assigning multiple shifts to the same employee on the same day, violating the business rule "one employee, one shift per day".
+
+## Step-by-Step Instructions
+
+### Step 1: Investigate
+1. Run the failing tests to identify which scenarios fail: `pytest -v` in the `issue_project/` directory
+2. Examine the codebase to understand the validation workflow
+3. Trace code execution from `scheduler.assign_shift()` through the validator
+4. Identify why same-day shift validation is not working
+
+### Step 2: Fix the Bug
+1. Locate the root cause of the validation failure
+2. Make minimal necessary changes to fix the issue
+3. Ensure your fix doesn't break other validations
+
+### Step 3: Create Fixed Version
+Create a new directory `issue_project_fixed/` with the corrected code:
+
+```
+issue_project_fixed/
+├── src/
+│   ├── __init__.py
+│   ├── models.py          # Copy from original (no changes needed)
+│   ├── scheduler.py       # Copy from original (no changes needed)
+│   └── validator.py       # FIXED VERSION
+├── tests/
+│   ├── __init__.py
+│   ├── test_same_day_shifts.py      # Copy from original
+│   └── test_continuous_days.py      # Copy from original
+├── requirements.txt       # Copy from original
+├── README.md             # Updated to reflect that bugs are fixed
+└── FIX_SUMMARY.md        # NEW: Your explanation of the fix
+```
+
+### Step 4: Full Validation
+1. Install dependencies in the fixed project: `pip install -r requirements.txt`
+2. Run the full test suite with verbose output: `pytest -v`
+3. Execute a runtime smoke test: Import modules and verify basic shift assignment works
+4. Confirm all tests pass (expected: 12/12 tests)
+
+## Output Specification
+
+### Deliverable 1: Fixed Project Directory
+Create `issue_project_fixed/` with all corrected files at the location specified in the workspace.
+
+### Deliverable 2: FIX_SUMMARY.md
+Document your fix with the following sections:
+- **Bug Identified:** Describe what was wrong and which files were affected
+- **Root Cause:** Explain why the bug existed and what the developer's mistake was
+- **Solution Applied:** Describe the approach and why it solves the problem
+- **Changes Made:** List all modified files and briefly describe each change
+- **Verification:** Confirm all tests pass and describe any additional testing performed
+
+### Deliverable 3: Updated README.md
+Update the README in the fixed version to:
+- Remove references to the bug
+- Indicate this is the corrected version
+- Show that all tests pass
+
+### Deliverable 4: Test Results
+Provide explicit confirmation that all automated tests pass with output showing test count and status.
+
+## Constraints & Preferences
+
+- **Do NOT modify test files** — they correctly describe the expected behavior
+- **Minimal changes** — fix only what's necessary (avoid over-engineering)
+- **No external dependencies** — use only pytest
+- **Preserve existing functionality** — don't break working validations
+- **Use relative paths** — no absolute paths in any files
+- **Code quality** — ensure the fix is clean and clearly addresses the root cause
+
+## Quality Gates
+
+1. All tests in `pytest -v` pass (expected: 12/12 tests)
+2. Same-day shift validation now raises `ValidationError` as expected
+3. Other validation rules still function correctly
+4. Only minimal code changes made (typically a single line or very small fix)
+5. FIX_SUMMARY.md clearly explains the issue and solution
+6. Project structure matches the specified layout exactly
+7. No errors or warnings during installation, test execution, or runtime validation
